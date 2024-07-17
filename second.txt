@@ -1,0 +1,152 @@
+airbnb2=# -- Таблиця user
+airbnb2=# CREATE TABLE "user" (
+airbnb2(#     user_id SERIAL PRIMARY KEY,
+airbnb2(#     user_type VARCHAR(50) CHECK (user_type IN ('guest', 'host')),
+airbnb2(#     name VARCHAR(255) NOT NULL,
+airbnb2(#     email VARCHAR(255) NOT NULL,
+airbnb2(#     password_hash VARCHAR(255) NOT NULL,
+airbnb2(#     phone_number VARCHAR(255) NOT NULL
+airbnb2(# );
+
+airbnb2=#
+airbnb2=# -- Таблиця hosts
+airbnb2=# CREATE TABLE hosts (
+airbnb2(#     host_id SERIAL PRIMARY KEY,
+airbnb2(#     user_id INT REFERENCES "user" (user_id),
+airbnb2(#     bio TEXT,
+airbnb2(#     rating DECIMAL(3,2),
+airbnb2(#     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+airbnb2(#     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+airbnb2(# );
+
+airbnb2=#
+airbnb2=# -- Таблиця PropertyTypes
+airbnb2=# CREATE TABLE PropertyTypes (
+airbnb2(#     type_id SERIAL PRIMARY KEY,
+airbnb2(#     type_name VARCHAR(255) NOT NULL
+airbnb2(# );
+
+airbnb2=#
+airbnb2=# -- Таблиця Amenities
+airbnb2=# CREATE TABLE Amenities (
+airbnb2(#     amenity_id SERIAL PRIMARY KEY,
+airbnb2(#     amenity_name VARCHAR(255) NOT NULL
+airbnb2(# );
+
+airbnb2=#
+airbnb2=# -- Таблиця rooms
+airbnb2=# CREATE TABLE rooms (
+airbnb2(#     room_id SERIAL PRIMARY KEY,
+airbnb2(#     host_id INT REFERENCES hosts (host_id),
+airbnb2(#     type_id INT REFERENCES PropertyTypes (type_id),
+airbnb2(#     room_name VARCHAR(255) NOT NULL,
+airbnb2(#     residents INT NOT NULL,
+airbnb2(#     description TEXT,
+airbnb2(#     price DECIMAL NOT NULL,
+airbnb2(#     has_ac BOOLEAN,
+airbnb2(#     has_refrigerator BOOLEAN,
+airbnb2(#     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+airbnb2(#     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+airbnb2(# );
+
+airbnb2=#
+airbnb2=# -- Таблиця RoomAmenities
+airbnb2=# CREATE TABLE RoomAmenities (
+airbnb2(#     room_id INT REFERENCES rooms (room_id),
+airbnb2(#     amenity_id INT REFERENCES Amenities (amenity_id),
+airbnb2(#     PRIMARY KEY (room_id, amenity_id)
+airbnb2(# );
+
+airbnb2=#
+airbnb2=# -- Таблиця bookings
+airbnb2=# CREATE TABLE bookings (
+airbnb2(#     reservation_id SERIAL PRIMARY KEY,
+airbnb2(#     room_id INT REFERENCES rooms (room_id),
+airbnb2(#     guest_id INT REFERENCES "user" (user_id),
+airbnb2(#     start_date DATE NOT NULL,
+airbnb2(#     end_date DATE NOT NULL,
+airbnb2(#     status VARCHAR(50) CHECK (status IN ('pending', 'confirmed', 'cancelled')),
+airbnb2(#     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+airbnb2(#     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+airbnb2(# );
+
+airbnb2=#
+airbnb2=# -- Таблиця Reviews
+airbnb2=# CREATE TABLE Reviews (
+airbnb2(#     review_id SERIAL PRIMARY KEY,
+airbnb2(#     room_id INT REFERENCES rooms (room_id),
+airbnb2(#     guest_id INT REFERENCES "user" (user_id),
+airbnb2(#     rating INT NOT NULL,
+airbnb2(#     average_rating DECIMAL,
+airbnb2(#     total_reviews INT,
+airbnb2(#     comment TEXT,
+airbnb2(#     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+airbnb2(# );
+
+airbnb2=# -- Таблиця PropertyTypes
+airbnb2=# CREATE TABLE PropertyTypes (
+airbnb2(#     type_id SERIAL PRIMARY KEY,
+airbnb2(#     type_name VARCHAR(255) NOT NULL
+airbnb2(# );
+airbnb2=# -- Таблиця PropertyTypes
+airbnb2=# INSERT INTO PropertyTypes (type_name) VALUES
+airbnb2-# ('Apartment'),
+airbnb2-# ('House'),
+airbnb2-# ('Studio');
+
+airbnb2=# -- Таблиця Amenities
+airbnb2=# INSERT INTO Amenities (amenity_name) VALUES
+airbnb2-# ('WiFi'),
+airbnb2-# ('Air Conditioning'),
+airbnb2-# ('Parking');
+
+airbnb2=# -- Таблиця user
+airbnb2=# INSERT INTO "user" (user_type, name, email, password_hash, phone_number) VALUES
+airbnb2-# ('guest', 'John Doe', 'john@example.com', 'hashedpassword1', '1234567890'),
+airbnb2-# ('host', 'Jane Smith', 'jane@example.com', 'hashedpassword2', '0987654321'),
+airbnb2-# ('guest', 'Alice Johnson', 'alice@example.com', 'hashedpassword3', '1122334455');
+
+airbnb2=# -- Таблиця hosts
+airbnb2=# INSERT INTO hosts (user_id, bio, rating) VALUES
+airbnb2-# (2, 'Experienced host with multiple properties.', 4.5),
+airbnb2-# (2, 'Providing comfortable stays for business travelers.', 4.7),
+airbnb2-# (2, 'Host with a focus on family-friendly accommodations.', 4.9);
+
+airbnb2=# -- Таблиця rooms
+airbnb2=# INSERT INTO rooms (host_id, type_id, room_name, residents, description, price, has_ac, has_refrigerator) VALUES
+airbnb2-# (1, 1, 'Cozy Apartment', 2, 'A cozy apartment in the city center.', 75.00, true, true),
+airbnb2-# (1, 2, 'Spacious House', 4, 'A spacious house with a garden.', 150.00, true, true),
+airbnb2-# (1, 3, 'Modern Studio', 1, 'A modern studio for short stays.', 50.00, false, false);
+
+airbnb2=# -- Таблиця RoomAmenities
+airbnb2=# INSERT INTO RoomAmenities (room_id, amenity_id) VALUES
+airbnb2-# (1, 1),
+airbnb2-# (2, 2),
+airbnb2-# (3, 3);
+
+airbnb2=# -- Таблиця bookings
+airbnb2=# INSERT INTO bookings (room_id, guest_id, start_date, end_date, status) VALUES
+airbnb2-# (1, 1, '2024-07-01', '2024-07-07', 'confirmed'),
+airbnb2-# (2, 3, '2024-08-10', '2024-08-15', 'pending'),
+airbnb2-# (3, 1, '2024-09-05', '2024-09-10', 'cancelled');
+
+airbnb2=# -- Таблиця Reviews
+airbnb2=# INSERT INTO Reviews (room_id, guest_id, rating, average_rating, total_reviews, comment) VALUES
+airbnb2-# (1, 1, 5, 4.8, 10, 'Great stay, very comfortable!'),
+airbnb2-# (2, 3, 4, 4.5, 8, 'Nice house but a bit noisy.'),
+airbnb2-# (3, 1, 3, 4.0, 6, 'Decent place for a short stay.');
+
+airbnb2=# SELECT
+airbnb2-#     u.user_id,
+airbnb2-#     u.name,
+airbnb2-#     COUNT(b.reservation_id) AS total_bookings
+airbnb2-# FROM
+airbnb2-#     "user" u
+airbnb2-# JOIN
+airbnb2-#     bookings b ON u.user_id = b.guest_id
+airbnb2-# GROUP BY
+airbnb2-#     u.user_id, u.name
+airbnb2-# ORDER BY
+airbnb2-#     total_bookings DESC
+airbnb2-# LIMIT
+airbnb2-#     1;
